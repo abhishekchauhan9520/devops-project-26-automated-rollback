@@ -1,0 +1,4 @@
+.release-state/
+__pycache__/
+*.pyc
+.env
