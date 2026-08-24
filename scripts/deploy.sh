@@ -3,25 +3,22 @@ set -euo pipefail
 
 VERSION="${1:-}"
 MODE="${2:-normal}"
-[[ -n "$VERSION" ]] || { echo "usage: $0 <version> [normal|force-fail]" >&2; exit 64; }
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+STATE_DIR="${STATE_DIR:-$ROOT_DIR/.release-state}"
 
-STATE_DIR="${STATE_DIR:-.release-state}"
-mkdir -p "$STATE_DIR"
-source "$(dirname "$0")/state.sh"
+[[ -n "$VERSION" ]] || { echo "usage: $0 <version> [normal|force-fail]" >&2; exit 64; }
+source "$SCRIPT_DIR/state.sh"
 
 previous=""
-if previous="$(known_good 2>/dev/null)"; then
-  :
-else
-  previous="none"
-fi
+if previous="$(known_good 2>/dev/null)"; then :; else previous="none"; fi
 record_current "$VERSION"
 record_event "deploy-start" "$VERSION"
 
 if [[ "$MODE" == "force-fail" ]]; then
   record_event "health-failed" "$VERSION"
   if [[ "$previous" != "none" ]]; then
-    "$PWD/scripts/rollback.sh" "$previous"
+    "$SCRIPT_DIR/rollback.sh" "$previous"
   fi
   exit 1
 fi
