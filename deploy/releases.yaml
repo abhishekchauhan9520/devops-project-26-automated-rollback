@@ -1,0 +1,7 @@
+releases:
+  - version: v1.0.0
+    expected_status: healthy
+  - version: v1.1.0
+    expected_status: healthy
+  - version: v2.0.0-broken
+    expected_status: unhealthy
