@@ -18,7 +18,7 @@ record_event "deploy-start" "$VERSION"
 if [[ "$MODE" == "force-fail" ]]; then
   record_event "health-failed" "$VERSION"
   if [[ "$previous" != "none" ]]; then
-    "$SCRIPT_DIR/rollback.sh" "$previous"
+    bash "$SCRIPT_DIR/rollback.sh" "$previous"
   fi
   exit 1
 fi
